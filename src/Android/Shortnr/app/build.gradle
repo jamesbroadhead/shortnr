@@ -1,9 +1,19 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
 android {
     compileSdkVersion 28
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
     defaultConfig {
-        applicationId "com.mongodb.shortnr.shortnr"
+        applicationId "com.mongodb.shortnr"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
@@ -19,6 +29,8 @@ android {
 }
 
 dependencies {
+    implementation 'org.mongodb:stitch-android-sdk:4.0.6-SNAPSHOT'
+    implementation 'org.mongodb:stitch-android-services-mongodb-local:4.0.6-SNAPSHOT'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
