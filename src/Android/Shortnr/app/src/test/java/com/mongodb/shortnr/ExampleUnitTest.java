@@ -1,4 +1,4 @@
-package com.mongodb.shortnr.shortnr;
+package com.mongodb.shortnr;
 
 import org.junit.Test;
 
