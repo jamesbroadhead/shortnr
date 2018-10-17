@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void onLogout() {
-
             final MainActivity activity = _main.get();
 
             final List<Task<Void>> futures = new ArrayList<>();
@@ -171,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = GoogleSignInApi.getSignInResultFromIntent(data);
-            // why is result.isSuccess() false when I am signing in?
             handleGooglSignInResult(result);
             return;
         }
@@ -186,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.d(TAG, "Google Login Status:" + result.getStatus());
-        Log.d(TAG, "Googl Login Result:" + result.isSuccess());
+        Log.d(TAG, "Google Login Result:" + result.isSuccess());
 
         if (result.isSuccess()) {
             final GoogleCredential googleCredential = new GoogleCredential(result.getSignInAccount().getServerAuthCode());
@@ -243,12 +241,27 @@ public class MainActivity extends AppCompatActivity {
     private void initMainView() {
         setContentView(R.layout.activity_main);
         findViewById(R.id.shorten_url_form).setVisibility(View.VISIBLE);
+        EditText mURLText = (EditText) findViewById(R.id.long_url);
+
+        mURLText.setOnClickListener() {
+            @Override public void onClick( vinal View ignored) {
+                mURLText.setText("");
+            }
+        }
+
+        findViewById(R.id.shorten_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View ignored) {
+                mURLText.setText(shortenURL(mURLText.getText().toString()));
+            }
+        });
 
         return;
     }
 
     private String shortenURL(final String longURL) {
-        final String shortURL = new String();
+        Log.d(TAG, "Shortening URL:" + longURL);
+        final String shortURL = "https://mongo.cc/" + longURL.hashCode();
 
         // shorten the URL, save the redirection map in Atlas
         // Present the short URL to the user

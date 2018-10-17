@@ -23,9 +23,11 @@
             android:orientation="vertical">
 
             <EditText
+                android:id="@+id/long_url"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Paste URL" />
+                android:text="Paste URL"
+                android:a />
 
             <Button
                 android:id="@+id/shorten_button"
