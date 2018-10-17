@@ -240,21 +240,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void initMainView() {
         setContentView(R.layout.activity_main);
-        findViewById(R.id.shorten_url_form).setVisibility(View.VISIBLE);
-        EditText mURLText = (EditText) findViewById(R.id.long_url);
+        EditText lURLText = (EditText) findViewById(R.id.long_url);
+        EditText sURLText = (EditText) findViewById(R.id.short_url);
 
-        mURLText.setOnClickListener() {
-            @Override public void onClick( vinal View ignored) {
-                mURLText.setText("");
+        lURLText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View ignored) {
+                lURLText.setText("");
             }
-        }
+        });
 
         findViewById(R.id.shorten_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View ignored) {
-                mURLText.setText(shortenURL(mURLText.getText().toString()));
+                sURLText.setText(shortenURL(lURLText.getText().toString()));
             }
         });
+
+        findViewById(R.id.shorten_url_form).setVisibility(View.VISIBLE);
 
         return;
     }

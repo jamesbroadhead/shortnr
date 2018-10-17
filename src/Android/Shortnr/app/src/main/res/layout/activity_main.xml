@@ -26,8 +26,7 @@
                 android:id="@+id/long_url"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Paste URL"
-                android:a />
+                android:text="Paste URL to Shortn" />
 
             <Button
                 android:id="@+id/shorten_button"
@@ -37,6 +36,13 @@
                 android:layout_marginTop="8dp"
                 android:text="Shorten URL"
                 android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/short_url"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text=""
+                android:inputType="none" />
 
         </LinearLayout>
     </ScrollView>
