@@ -82,11 +82,9 @@ import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
  */
 public class MainActivity extends AppCompatActivity {
 
-
     private static final String TAG = "Shortnr";
     private static final int RC_SIGN_IN = 421;
 
-    //private CallbackManager _callbackManager;
     private GoogleApiClient _googleApiClient;
     private StitchAppClient _client;
     private RemoteMongoClient _mongoClient;
@@ -100,13 +98,11 @@ public class MainActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         _handler = new Handler();
-        //_refresher = new ListRefresher(this);
 
         this._client = Stitch.getDefaultAppClient();
         this._client.getAuth().addAuthListener(new MyAuthListener(this));
@@ -175,16 +171,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             final GoogleSignInResult result = GoogleSignInApi.getSignInResultFromIntent(data);
+            // why is result.isSuccess() false when I am signing in?
             handleGooglSignInResult(result);
             return;
         }
-
-        /*
-        if (_callbackManager != null) {
-            _callbackManager.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-        */
 
         Log.e(TAG, "Nowhere to send activity result for ourselves");
     }
@@ -195,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Log.d(TAG, "handleGooglSignInResult:" + result.isSuccess());
+        Log.d(TAG, "Google Login Status:" + result.getStatus());
+        Log.d(TAG, "Googl Login Result:" + result.isSuccess());
+
         if (result.isSuccess()) {
             final GoogleCredential googleCredential = new GoogleCredential(result.getSignInAccount().getServerAuthCode());
             _client.getAuth().loginWithCredential(googleCredential).addOnCompleteListener(new OnCompleteListener<StitchUser>() {
@@ -250,15 +242,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void initMainView() {
         setContentView(R.layout.activity_main);
+        findViewById(R.id.shorten_url_form).setVisibility(View.VISIBLE);
 
-        _refresher.run();
+        return;
     }
 
-    private void shortenURL(final String longURL) {
+    private String shortenURL(final String longURL) {
         final String shortURL = new String();
 
         // shorten the URL, save the redirection map in Atlas
         // Present the short URL to the user
+        return shortURL;
     }
 
     private void setupLogin() {
@@ -269,12 +263,13 @@ public class MainActivity extends AppCompatActivity {
 
         final String googleClientId = getString(R.string.google_client_id);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        // If there is a valid Google Client ID defined in strings.xml, offer Google as a login option.
         final GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestServerAuthCode(googleClientId, false);
-        final GoogleSignInOptions gso = gsoBuilder.build();
+        final GoogleSignInOptions gso = gsoBuilder
+            .requestEmail()
+            .build();
 
         if (_googleApiClient != null) {
             _googleApiClient.stopAutoManage(MainActivity.this);

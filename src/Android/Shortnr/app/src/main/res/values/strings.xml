@@ -2,7 +2,7 @@
     <string name="app_name">Shortnr</string>
 
     <string name="stitch_client_app_id">tinybitly-iawza</string>
-    <string name="google_client_id">1026553293395-0j970tov85ll0lspm4cv85nus61eo6nj.apps.googleusercontent.com</string>
+    <string name="google_client_id">1026553293395-125r2odnb7sinfmg9i61hr9rdpgeifs5.apps.googleusercontent.com</string>
     <string name="action_sign_in">Login using Google</string>
     <string name="main_activity">URL to Shortn</string>
     <string name="action_settings">Settings</string>
