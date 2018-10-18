@@ -61,8 +61,8 @@ import com.mongodb.stitch.android.core.Stitch;
 import com.mongodb.stitch.android.core.auth.StitchAuth;
 import com.mongodb.stitch.android.core.auth.StitchAuthListener;
 import com.mongodb.stitch.android.core.StitchAppClient;
+import com.mongodb.stitch.android.services.mongodb.remote.RemoteMongoDatabase;
 import com.mongodb.stitch.core.auth.providers.anonymous.AnonymousCredential;
-import com.mongodb.stitch.core.auth.providers.facebook.FacebookCredential;
 import com.mongodb.stitch.core.auth.providers.google.GoogleCredential;
 import com.mongodb.stitch.core.services.mongodb.remote.RemoteInsertOneResult;
 
@@ -87,14 +87,12 @@ public class MainActivity extends AppCompatActivity {
 
     private GoogleApiClient _googleApiClient;
     private StitchAppClient _client;
-    private RemoteMongoClient _mongoClient;
+    private RemoteMongoCollection rMongo;
 
     private Handler _handler;
     private Runnable _refresher;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -107,7 +105,10 @@ public class MainActivity extends AppCompatActivity {
         this._client = Stitch.getDefaultAppClient();
         this._client.getAuth().addAuthListener(new MyAuthListener(this));
 
-        _mongoClient = this._client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas");
+        rMongo = this._client.getServiceClient(RemoteMongoClient.factory, "mongodb-atlas")
+                .getDatabase("shortnr")
+                .getCollection("redirects");
+
         setupLogin();
     }
 
@@ -240,8 +241,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initMainView() {
         setContentView(R.layout.activity_main);
-        EditText lURLText = (EditText) findViewById(R.id.long_url);
-        EditText sURLText = (EditText) findViewById(R.id.short_url);
+        final EditText lURLText = (EditText) findViewById(R.id.long_url);
+        final EditText sURLText = (EditText) findViewById(R.id.short_url);
+        final EditText errorText = (EditText) findViewById(R.id.error_text);
 
         lURLText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,7 +255,28 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.shorten_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View ignored) {
-                sURLText.setText(shortenURL(lURLText.getText().toString()));
+                errorText.setText("");
+
+                final String shortURL = shortenURL(lURLText.getText().toString());
+                final Document doc = new Document();
+                doc.put("owner", _client.getAuth().getUser());
+                doc.put("longURL", lURLText.getText());
+                doc.put("shortURL", shortURL);
+
+                Log.d(TAG, "Inserting Redirect Document:" + doc);
+
+                final Task<RemoteInsertOneResult> res = rMongo.insertOne(doc);
+                res.addOnCompleteListener(new OnCompleteListener<RemoteInsertOneResult>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<RemoteInsertOneResult> task) {
+                        if (task.isSuccessful()) {
+                            sURLText.setText(shortURL);
+                        } else {
+                            Log.e(TAG, "Error adding redirect", res.getException());
+                            errorText.setText("Error: " + res.getException());
+                        }
+                    }
+                });
             }
         });
 
