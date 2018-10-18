@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
 
                 final String shortURL = shortenURL(lURLText.getText().toString());
                 final Document doc = new Document();
-                doc.put("owner", _client.getAuth().getUser());
-                doc.put("longURL", lURLText.getText());
+                doc.put("owner_id", _client.getAuth().getUser().getId());
+                doc.put("longURL", lURLText.getText().toString());
                 doc.put("shortURL", shortURL);
 
                 Log.d(TAG, "Inserting Redirect Document:" + doc);
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String shortenURL(final String longURL) {
         Log.d(TAG, "Shortening URL:" + longURL);
-        final String shortURL = "https://mongo.cc/" + longURL.hashCode();
+        final String shortURL = "https://mdb.cc/" + longURL.hashCode();
 
         // shorten the URL, save the redirection map in Atlas
         // Present the short URL to the user
